@@ -3,14 +3,19 @@
 int init_image(void *buf, size_t len, int imageType, VipsImage **out) {
     int code = 1;
 
-    if (imageType == JPEG) {
+    switch(imageType) {
+        case JPEG:
         code = vips_jpegload_buffer(buf, len, out, "access", VIPS_ACCESS_RANDOM, NULL);
-    } else if (imageType == PNG) {
+        break;
+        case PNG:
         code = vips_pngload_buffer(buf, len, out, "access", VIPS_ACCESS_RANDOM, NULL);
-    } else if (imageType == WEBP) {
+        break;
+        case WEBP:
         code = vips_webpload_buffer(buf, len, out, "access", VIPS_ACCESS_RANDOM, NULL);
-    } else if (imageType == TIFF) {
+        break;
+        case TIFF:
         code = vips_tiffload_buffer(buf, len, out, "access", VIPS_ACCESS_RANDOM, NULL);
+        break;
     }
 
     return code;
@@ -26,27 +31,27 @@ int load_jpeg_buffer(void *buf, size_t len, VipsImage **out, int shrink) {
 
 int save_jpeg_buffer(VipsImage *in, void **buf, size_t *len, int strip, int quality, int interlace) {
     return vips_jpegsave_buffer(in, buf, len,
-        "strip", INT_TO_GBOOLEAN(strip),
+        "strip", strip,
         "Q", quality,
         "optimize_coding", TRUE,
-        "interlace", INT_TO_GBOOLEAN(interlace),
+        "interlace", interlace,
         NULL);
 }
 
 int save_png_buffer(VipsImage *in, void **buf, size_t *len, int strip, int compression, int quality, int interlace) {
     return vips_pngsave_buffer(in, buf, len,
-        "strip", INT_TO_GBOOLEAN(strip),
+        "strip", strip,
         "compression", compression,
-        "interlace", INT_TO_GBOOLEAN(interlace),
+        "interlace", interlace,
         "filter", VIPS_FOREIGN_PNG_FILTER_NONE,
         NULL);
 }
 
 int save_webp_buffer(VipsImage *in, void **buf, size_t *len, int strip, int quality, int lossless) {
     return vips_webpsave_buffer(in, buf, len,
-        "strip", INT_TO_GBOOLEAN(strip),
+        "strip", strip,
         "Q", quality,
-        "lossless", INT_TO_GBOOLEAN(lossless),
+        "lossless", lossless,
         NULL);
 }
 
